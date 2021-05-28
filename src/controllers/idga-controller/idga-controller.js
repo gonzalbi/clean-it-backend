@@ -1,75 +1,5 @@
 const service = require('../../services/idga-service');
 
-const locationData = [
-    {
-        locationName : 'Empresa 1',
-        sections : [
-            {
-                sectionName : 'E1 - Seccion 1',
-                subsections : [
-                    {
-                        subsectionName : 'E1 - S1 - Subseccion 1'
-                    },
-                    {
-                        subsectionName : 'E1 - S1 - Subseccion 2'
-                    },
-                    {
-                        subsectionName : 'E1 - S1 - Subseccion 3'
-                    },
-                ]
-            },
-            {
-                sectionName : 'E1 - Seccion 2',
-                subsections : [
-                    {
-                        subsectionName : 'E1 - S2 - Subseccion 1'
-                    },
-                    {
-                        subsectionName : 'E1 - S2 - Subseccion 2'
-                    },
-                    {
-                        subsectionName : 'E1 - S2 - Subseccion 3'
-                    },
-                ]
-            }
-        ]
-    },
-    {
-        locationName : 'Empresa 2',
-        sections : [
-            {
-                sectionName : 'E2 - Seccion 1',
-                subsections : [
-                    {
-                        subsectionName : 'E2 - S1 - Subseccion 1'
-                    },
-                    {
-                        subsectionName : 'E2 - S1 - Subseccion 2'
-                    },
-                    {
-                        subsectionName : 'E2 - S1 - Subseccion 3'
-                    },
-                ]
-            },
-            {
-                sectionName : 'E2 - Seccion 2',
-                subsections : [
-                    {
-                        subsectionName : 'E2 - S2 - Subseccion 1'
-                    },
-                    {
-                        subsectionName : 'E2 - S2 - Subseccion 2'
-                    },
-                    {
-                        subsectionName : 'E2 - S2 - Subseccion 3'
-                    },
-                ]
-            }
-        ]
-    },
-]
-
-
 const getLocationData = async (req, res, next) => {
     try{
         var data = await service.getAll()
@@ -78,10 +8,6 @@ const getLocationData = async (req, res, next) => {
         console.log(err)
     }
 };
-
-module.exports = {
-    getLocationData
-}
 
 const mapData = (data) => {
     let retData = [];
@@ -117,4 +43,9 @@ const mapData = (data) => {
 
     }
     return retData
+}
+
+
+module.exports = {
+    getLocationData
 }
