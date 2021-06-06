@@ -1,7 +1,11 @@
 const express = require('express');
+const apiRoutes = require('./api')
 const router = express.Router();
 
-const idgaController = require('../controllers/idga-controller');
+const init = (server) => {
+    server.use("/",apiRoutes)
+}
 
-router.use('/', idgaController);
-module.exports = router;
+module.exports = {
+    init
+}

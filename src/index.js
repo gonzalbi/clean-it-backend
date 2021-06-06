@@ -1,12 +1,24 @@
-const app = require('express')()
+const express = require('express')
+const server = express()
 const routes = require('./routes')
 
-const port = process.env.PORT || 8080 
+let create = (config) => {
+    server.set('port', config.port)
+    server.set('hostname', config.hostname)
 
-app.use('/',routes)
+    routes.init(server)
+}
 
-//Start server
-app.listen(port, () => console.log(`app listening on http://localhost${port}`))
+let start = () => {
+    const hostname = server.get('hostname')
+    const port = server.get('port')
 
+    server.listen(port,console.log(`Server listening on http://${hostname}:${port}`))
+}
+
+module.exports = {
+    create,
+    start
+}
 
 

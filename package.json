@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "config": "^3.3.6",
     "express": "^4.17.1",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.7",
     "winston": "^3.3.3"
   },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/index.js"
+    "start": "nodemon --inspect index.js"
   },
   "keywords": [],
   "author": "",

@@ -1,3 +1,7 @@
+const Location = require("../../models/Location");
+const Sector = require("../../models/Sector");
+const SubSector = require("../../models/SubSector");
+
 const service = require('../../services/idga-service');
 
 const getLocationData = async (req, res, next) => {
@@ -9,37 +13,38 @@ const getLocationData = async (req, res, next) => {
     }
 };
 
+const getOperations = async(req, res, next) => {
+    const opid = req.params.code;
+    try{
+        var data = await service.getOperationById(opid)
+        res.send(data)
+    }catch(err){
+        console.log(err)
+    }
+};
+
 const mapData = (data) => {
     let retData = [];
     for(let item of data){
-        var locationData = {}
-        let sectorData = {}
-        let subSectorData = []
 
-        if(location = retData.find( x => x.locationName == item.locacion_name)){
-            if(sector = location.sectors.find(x => x.sectorName == item.sector_name)){
-                sector.subsections.push(item.subsector_name)
-                
+        if(location = retData.find( x => x.getName() == item.locacion_name)){
+            if(sector = location.getSectors().find(x => x.getName() == item.sector_name)){
+                sector.addSubSector( new SubSector(item.subsector_name))
                 continue
             }
-            
-            sectorData.sectorName = item.sector_name
-            sectorData.subsections = []
-            sectorData.subsections.push(item.subsector_name)
 
-            location.sectors.push(sectorData)            
+            location.Sectors.push(new Sector(item.sector_name, new SubSector(item.subsector_name)))            
             continue
         }
 
-        locationData.locationName = item.locacion_name
-        sectorData.sectorName = item.sector_name
-        sectorData.subsections = []
-        sectorData.subsections.push(item.subsector_name)
-        
-        locationData.sectors = []
-        locationData.sectors.push(sectorData)
 
-        retData.push(locationData)
+        retData.push(
+            new Location(item.locacion_name,
+                new Sector(item.sector_name,
+                    new SubSector(item.subsector_name,null)
+                )
+            )
+        )
 
     }
     return retData
@@ -47,5 +52,6 @@ const mapData = (data) => {
 
 
 module.exports = {
-    getLocationData
+    getLocationData,
+    getOperations
 }
