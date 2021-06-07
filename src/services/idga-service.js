@@ -5,7 +5,7 @@ const logger = require('../utils/logger');
 const getAll = async () => {
     let sql = 
     `
-    select locacion_name,sector_name,subsector_name from locacion
+    select idlocacion,locacion_name,idsector,sector_name,idsubsector,subsector_name from locacion
     inner join sector on locacion.idlocacion = sector.loc_id
     inner join subsector on sector.idsector = subsector.sector_id
     `;
@@ -20,11 +20,11 @@ const getAll = async () => {
 
 }
 
-const getOperationById = async(idop) => {
+const getOperationById = async(subsecid) => {
     let sql = 
     `
     select * from operacion
-    
+    where subsector_id = ${subsecid}
     `;
 
     try {		  
@@ -38,5 +38,6 @@ const getOperationById = async(idop) => {
 }
 
 module.exports = {
-    getAll
+    getAll,
+    getOperationById
 }

@@ -1,7 +1,9 @@
 class Operation {
+    Id = "";
     Name = "";
 
-    constructor(name){
+    constructor(id,name){
+        this.Id = id;
         this.Name = name;
     }
 }

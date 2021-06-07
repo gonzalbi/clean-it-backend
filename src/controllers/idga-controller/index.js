@@ -8,6 +8,7 @@ router.get('/',(req,res)=> {
 })
 router.get('/getLocationData', idgaController.getLocationData)
 router.get('/getOperations/:opid',idgaController.getOperations)
+router.post('/saveOperationData', idgaController.saveOperationData)
 
 
 module.exports = router
