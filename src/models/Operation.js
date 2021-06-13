@@ -7,3 +7,5 @@ class Operation {
         this.Name = name;
     }
 }
+
+module.exports = Operation;

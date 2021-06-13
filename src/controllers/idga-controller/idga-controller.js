@@ -1,6 +1,7 @@
 const Location = require("../../models/Location");
 const Sector = require("../../models/Sector");
 const SubSector = require("../../models/SubSector");
+const Operation = require("../../models/Operation");
 
 const service = require('../../services/idga-service');
 
@@ -17,7 +18,12 @@ const getOperations = async(req, res, next) => {
     const subsecid = req.params.opid;
     try{
         var data = await service.getOperationById(subsecid)
-        res.send(data)
+        let operations = []
+        for(let operation of data){
+            operations.push(new Operation(operation.idoperacion,operation.name))
+        }
+
+        res.send(operations)
     }catch(err){
         console.log(err)
     }
@@ -42,7 +48,9 @@ const mapLocationData = (data) => {
                 continue
             }
 
-            location.Sectors.push(new Sector(item.idsector,item.sector_name, new SubSector(item.idsubsector,item.subsector_name)))            
+            location.Sectors.push(
+                new Sector(item.idsector,item.sector_name, 
+                    new SubSector(item.idsubsector,item.subsector_name)))            
             continue
         }
 
