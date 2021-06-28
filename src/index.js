@@ -3,8 +3,13 @@ const server = express()
 const routes = require('./routes')
 
 let create = (config) => {
+    //SET SERVER SETTINGS
     server.set('port', config.port)
     server.set('hostname', config.hostname)
+
+    //JSON parse
+    server.use(express.urlencoded({extended : true}));
+    server.use(express.json())
 
     routes.init(server)
 }

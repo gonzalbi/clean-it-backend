@@ -3,10 +3,11 @@ class Location {
     Name = "";
     Sectors = [];
 
-    constructor(id,name, sectors){
+    constructor(id,name, sectors = null){
         this.Id = id;
         this.Name = name;
-        this.Sectors.push(sectors);
+        if(sectors) this.Sectors.push(sectors);
+       
     }
 
     addSector(sector){

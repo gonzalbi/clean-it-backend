@@ -3,10 +3,12 @@ class Sector {
     Name = "";
     SubSectors = [];
 
-    constructor(id,name, subsectors){
+    constructor(id,name, subsectors = null){
         this.Id = id;
         this.Name = name;
-        this.SubSectors.push(subsectors);
+        
+        if(subsectors) this.SubSectors.push(subsectors);;
+        
     }
 
     getName(){

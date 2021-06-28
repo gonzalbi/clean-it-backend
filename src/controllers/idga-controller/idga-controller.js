@@ -37,6 +37,60 @@ const saveOperationData = async(req, res, next) => {
     }
 }
 
+const addLocation = async(req,res,next) => {
+    try {
+        let body = req.body
+        let locationName = body.name
+        let locationId = body.id ? body.id : null
+        let response = await service.addLocation(locationId, locationName)
+
+        res.status(200).send('Location Created')
+    }catch (err){
+        console.log(err)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
+const addSector = async(req,res,next) => {
+    try {
+        let body = req.body
+        let locationId = body.parentId
+        let sectorName = body.name
+        await service.addSector(null,sectorName, locationId)
+
+        res.status(200).send('Sector Created')
+    }catch (err){
+        console.log(err)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
+const addSubsector = async(req,res,next) => {
+    try {
+        let body = req.body
+        let sectorid = body.parentId
+        let subsectorName = body.name
+        await service.addSubsector(null,subsectorName, sectorid)
+
+        res.status(200).send('Sector Created')
+    }catch (err){
+        console.log(err)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
+const getOperationData = async(req,res,next) => {
+    try {
+        const opid = req.params.opid;
+        let response = await service.getOperationDataById(opid)
+
+        res.status(200).send(response)
+    }catch (err){
+        console.log(err)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
 
 const mapLocationData = (data) => {
     let retData = [];
@@ -44,24 +98,21 @@ const mapLocationData = (data) => {
 
         if(location = retData.find( x => x.getId() == item.idlocacion)){
             if(sector = location.getSectors().find(x => x.getId() == item.idsector)){
-                sector.addSubSector( new SubSector(item.idsubsector,item.subsector_name))
+                let subsect = item.idsubsector ? new SubSector(item.idsubsector,item.subsector_name) : null
+                sector.addSubSector( subsect )
                 continue
             }
-
-            location.Sectors.push(
-                new Sector(item.idsector,item.sector_name, 
-                    new SubSector(item.idsubsector,item.subsector_name)))            
+            let subsect = item.idsubsector ? new SubSector(item.idsubsector,item.subsector_name) : null
+            let sect = item.idsector ? new Sector(item.idsector,item.sector_name,subsect) : null
+            location.Sectors.push(sect)            
             continue
         }
 
+        let newSubsector = item.idsubsector ? new SubSector(item.idsubsector,item.subsector_name,null) : null
+        let newSector = item.idsector ? new Sector(item.idsector,item.sector_name,newSubsector) : null
+        let newLocation = new Location(item.idlocacion,item.locacion_name,newSector)
 
-        retData.push(
-            new Location(item.idlocacion,item.locacion_name,
-                new Sector(item.idsector,item.sector_name,
-                    new SubSector(item.idsubsector,item.subsector_name,null)
-                )
-            )
-        )
+        retData.push(newLocation)
 
     }
     return retData
@@ -71,5 +122,9 @@ const mapLocationData = (data) => {
 module.exports = {
     getLocationData,
     getOperations,
-    saveOperationData
+    saveOperationData,
+    addLocation,
+    addSector,
+    addSubsector,
+    getOperationData
 }
