@@ -8,8 +8,8 @@ let create = (config) => {
     server.set('hostname', config.hostname)
 
     //JSON parse
-    server.use(express.urlencoded({extended : true}));
     server.use(express.json())
+    server.use(express.urlencoded({ extended: true }));
 
     routes.init(server)
 }
