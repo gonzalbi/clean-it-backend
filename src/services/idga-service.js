@@ -1,6 +1,7 @@
 //const config = require("config")
 const db = require("../utils/database")
 const logger = require('../utils/logger');
+const moment = require('moment')
 
 const getAll = async () => {
     let sql = 
@@ -91,11 +92,30 @@ const getOperationDataById = async (operationId) => {
     }
 }
 
+const saveOperationData = async (operationData) => {
+
+    let sql = `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values`
+
+    for(let index in operationData){
+        const operation = operationData[index];
+        sql += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null)${operationData.length-1 == index ? ';' : ','}`
+    }    
+
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        logger.error('Insert operation_data: error', err);
+        throw ({ errno: err.errno, code: err.code });
+    }a
+}
+
 module.exports = {
     getAll,
     getOperationById,
     addLocation,
     addSector,
     addSubsector,
-    getOperationDataById
+    getOperationDataById,
+    saveOperationData
 }

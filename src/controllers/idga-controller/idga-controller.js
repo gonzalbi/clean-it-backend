@@ -2,6 +2,7 @@ const Location = require("../../models/Location");
 const Sector = require("../../models/Sector");
 const SubSector = require("../../models/SubSector");
 const Operation = require("../../models/Operation");
+const OperationData = require("../../models/OperationData")
 
 const service = require('../../services/idga-service');
 
@@ -31,10 +32,11 @@ const getOperations = async (req, res, next) => {
 
 const saveOperationData = async (req, res, next) => {
     try {
-        console.log(req.files)
         handleOperationData(req.body, req.files.map(x => x.filename))
-    } catch {
 
+        res.status(200).send('Operation saved')
+    } catch {
+        res.status(500).send(`Internal Error: ${err}`)
     }
 }
 
@@ -83,7 +85,7 @@ const addSubsector = async (req, res, next) => {
 const getOperationData = async (req, res, next) => {
     try {
         const opid = req.params.opid;
-        let response = await service.getOperationDataById(opid)
+        let response = formatOperationData(await service.getOperationDataById(opid))
 
         res.status(200).send(response)
     } catch (err) {
@@ -118,12 +120,36 @@ const mapLocationData = (data) => {
     return retData
 }
 
-const handleOperationData = (data,files) => {
+const formatOperationData = (data) => {
 
-    for(let opid of data.operationId){
-        
+    let operationData = []
+
+    for(let operation of data){
+        operationData.push(
+            new OperationData(operation.idoperacion,null,operation.op_score,operation.op_img_path,operation.op_date)
+        )
+
     }
+    return operationData;
+}
 
+const handleOperationData = async (data,files) => {
+
+    let operationData = [];
+
+    for(let i = 0; i < files.length; i++){
+
+        operationData.push(
+            new OperationData(data.operationId[i], data.operationName[i], data.score[i], files[i])
+        )
+
+    }
+    try{    
+        await service.saveOperationData(operationData)
+        return true
+    }catch (e){
+        console.log(e);
+    }
 }
 
 

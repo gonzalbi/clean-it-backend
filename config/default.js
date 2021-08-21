@@ -4,7 +4,7 @@ module.exports = {
     port: 3306,
     user: "root",
     password: "root",
-    database: "clean-it"
+    database: "cleanit"
   },
   server: {
     hostname: "localhost",

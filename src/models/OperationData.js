@@ -1,9 +1,16 @@
 class OperationData {
+    Id;
+    Name;
     Score;
     ImgPath;
-    
-    constructor(score, imgpath){
+    Date;
+    constructor(id, name,score,imgpath,date){
+        this.Id = id,
+        this.Name = name,
         this.Score = score;
         this.ImgPath = imgpath;
+        this.Date = date;
     }
 }
+
+module.exports = OperationData;

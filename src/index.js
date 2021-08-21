@@ -10,6 +10,7 @@ let create = (config) => {
     //JSON parse
     server.use(express.json())
     server.use(express.urlencoded({ extended: true }));
+    server.use('/img', express.static(__dirname + '/assets/img'))
 
     routes.init(server)
 }

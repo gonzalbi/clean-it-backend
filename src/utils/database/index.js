@@ -1,20 +1,15 @@
 var mysql = require('mysql')
-//var db = require('config').get('db')
+var db = require('config').get('db')
 var util = require('util')
 
 var pool = mysql.createPool({
   connectionLimit: 2,
-  /*host: db.host,
+  host: db.hostname,
   port: db.port,
   user: db.user,
   password: db.password,
-  database: db.database,*/
-  host: 'localhost',
-  port: '3306',
-  user: 'root',
-  password: 'root',
-  database: 'cleanit',
-})
+  database: db.database,
+},{multipleStatements : true})
 
 pool.query = util.promisify(pool.query)
 
