@@ -138,11 +138,9 @@ const handleOperationData = async (data,files) => {
     let operationData = [];
 
     for(let i = 0; i < files.length; i++){
-
         operationData.push(
             new OperationData(data.operationId[i], data.operationName[i], data.score[i], files[i])
         )
-
     }
     try{    
         await service.saveOperationData(operationData)

@@ -93,21 +93,27 @@ const getOperationDataById = async (operationId) => {
 }
 
 const saveOperationData = async (operationData) => {
-
-    let sql = `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values`
+    let sql = ``
 
     for(let index in operationData){
         const operation = operationData[index];
-        sql += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null)${operationData.length-1 == index ? ';' : ','}`
-    }    
 
-    try {		  
-        const data = await db.query(sql);
-        return data;
-    } catch (err) {   
-        logger.error('Insert operation_data: error', err);
-        throw ({ errno: err.errno, code: err.code });
-    }a
+        let check_if_exist = `select * from operacion_data where idoperacion ='${operation.Id}' and op_date ='${moment().format("YYYY-MM-DD")}'`
+        let data = await db.query(check_if_exist)
+        
+        if(data.length === 0){
+            sql += `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values (${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null);`
+        }
+    }    
+    if(sql){
+        try {		  
+            const data = await db.query(sql);
+            return data;
+        } catch (err) {   
+            logger.error('Insert operation_data: error', err);
+            throw ({ errno: err.errno, code: err.code });
+        }
+    }
 }
 
 module.exports = {
