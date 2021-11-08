@@ -93,21 +93,21 @@ const getOperationDataById = async (operationId) => {
 }
 
 const saveOperationData = async (operationData) => {
-    let sql = ``
-
+    let sql = `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values`
+    let values = ``
     for(let index in operationData){
         const operation = operationData[index];
 
         let check_if_exist = `select * from operacion_data where idoperacion ='${operation.Id}' and op_date ='${moment().format("YYYY-MM-DD")}'`
         let data = await db.query(check_if_exist)
-        
         if(data.length === 0){
-            sql += `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values (${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null);`
+            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null)${operationData.length-1 == index ? ';' : ','}`
         }
     }    
-    if(sql){
+
+    if(values){
         try {		  
-            const data = await db.query(sql);
+            const data = await db.query(sql+values);
             return data;
         } catch (err) {   
             logger.error('Insert operation_data: error', err);
