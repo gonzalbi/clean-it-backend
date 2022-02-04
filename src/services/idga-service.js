@@ -1,7 +1,6 @@
 //const config = require("config")
 const db = require("../utils/database")
 const logger = require('../utils/logger');
-const moment = require('moment')
 
 const getAll = async () => {
     let sql = 
@@ -98,10 +97,10 @@ const saveOperationData = async (operationData) => {
     for(let index in operationData){
         const operation = operationData[index];
 
-        let check_if_exist = `select * from operacion_data where idoperacion ='${operation.Id}' and op_date ='${moment().format("YYYY-MM-DD")}'`
+        let check_if_exist = `select * from operacion_data where idoperacion ='${operation.Id}' and op_date ='${operation.Date}'`
         let data = await db.query(check_if_exist)
         if(data.length === 0){
-            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${moment().format("YYYY-MM-DD")}',null)${operationData.length-1 == index ? ';' : ','}`
+            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${operation.Date}',null)${operationData.length-1 == index ? ';' : ','}`
         }
     }    
 
@@ -110,9 +109,23 @@ const saveOperationData = async (operationData) => {
             const data = await db.query(sql+values);
             return data;
         } catch (err) {   
-            logger.error('Insert operation_data: error', err);
+            logger.error('Insert operacion_data: error', err);
             throw ({ errno: err.errno, code: err.code });
         }
+    }
+}
+
+const getTodayOperationData = async (subSecId,date) => {
+    let sql = 
+    `select * from operacion o 
+    inner join operacion_data op on op.idoperacion = o.idoperacion
+    where o.subsector_id = '${subSecId}' and op.op_date ='${date}'`
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        logger.error('getTodayOperationData:error', err);
+        throw ({ errno: err.errno, code: err.code });
     }
 }
 
@@ -123,5 +136,6 @@ module.exports = {
     addSector,
     addSubsector,
     getOperationDataById,
-    saveOperationData
+    saveOperationData,
+    getTodayOperationData
 }
