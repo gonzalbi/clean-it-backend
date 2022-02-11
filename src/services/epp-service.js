@@ -13,8 +13,8 @@ const getEPPInfo = async (locationId) => {
         o.last_name,
         o.full_name
     from sector s
-    inner join sector_operator so on s.id_sector = so.id_sector
-    inner join operator o on o.id_operator = so.id_operator
+    left join sector_operator so on s.id_sector = so.id_sector
+    left join operator o on o.id_operator = so.id_operator
     where s.id_location = ${locationId}
     `;
 

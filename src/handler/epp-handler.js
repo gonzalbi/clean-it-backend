@@ -21,7 +21,7 @@ const getEppInfo = async (locationId) => {
         retData.push(newSector)
     }
 
-    return locationId
+    return retData
 }
 
 
