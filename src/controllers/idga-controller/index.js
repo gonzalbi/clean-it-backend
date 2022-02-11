@@ -9,13 +9,13 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         let filename = file.originalname.split('.')
-        filename = filename[0]+ '-' + moment().format("YYYY-MM-DD")+'.'+filename[1]
+        filename = moment().format("YYYY-MM-DD") + '-' + filename[0]+ '.'+filename[1]
 
       cb(null,  filename)
     }
   })
 
-const upload = multer({storage : storage})
+const upload = multer({storage})
 
 const idgaController = require('./idga-controller')
 
@@ -27,7 +27,7 @@ router.post('/addSector',idgaController.addSector)
 router.post('/addSubsector',idgaController.addSubsector)
 router.post('/saveOperationData',upload.array('files'), idgaController.saveOperationData)
 router.get('/getOperationData/:opid', idgaController.getOperationData)
-
+router.get('/getLocations',idgaController.getLocations)
 
 
 module.exports = router

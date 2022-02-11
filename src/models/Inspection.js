@@ -1,4 +1,4 @@
-class OperationData {
+class Inspection {
     Id;
     Name;
     Score;
@@ -13,4 +13,4 @@ class OperationData {
     }
 }
 
-module.exports = OperationData;
+module.exports = Inspection;

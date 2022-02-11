@@ -2,12 +2,14 @@ class Sector {
     Id = "";
     Name = "";
     SubSectors = [];
+    Operators = []
 
-    constructor(id,name, subsectors = null){
+    constructor(id,name, subsectors = null, operator = null){
         this.Id = id;
         this.Name = name;
         
-        if(subsectors) this.SubSectors.push(subsectors);;
+        if(subsectors) this.SubSectors.push(subsectors);
+        if(operator) this.Operators.push(operator);
         
     }
 
@@ -21,6 +23,10 @@ class Sector {
 
     addSubSector(subsector){
         this.SubSectors.push(subsector);
+    }
+
+    addOperator(operator){
+        this.Operators.push(operator)
     }
 }
 

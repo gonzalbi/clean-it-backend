@@ -89,6 +89,16 @@ const checkOperationData = async (req, res, next) => {
     }
 }
 
+const getLocations = async (req,res) => {
+    try{
+        const data = await idgaHandler.getLocations()
+        res.status(200).send(data)
+    }catch (e) {
+        console.log(e)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
 
 module.exports = {
     getLocationData,
@@ -98,5 +108,6 @@ module.exports = {
     addSector,
     addSubsector,
     getOperationData,
-    checkOperationData
+    checkOperationData,
+    getLocations
 }

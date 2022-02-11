@@ -5,9 +5,16 @@ const logger = require('../utils/logger');
 const getAll = async () => {
     let sql = 
     `
-    select idlocacion,locacion_name,idsector,sector_name,idsubsector,subsector_name from locacion
-    left join sector on locacion.idlocacion = sector.loc_id
-    left join subsector on sector.idsector = subsector.sector_id
+    select 
+        l.id_location,
+        l.name as location_name,
+        s.id_sector,
+        s.name as sector_name,
+        ss.id_subsector,
+        ss.name as subsector_name
+    from location l
+    left join sector s on l.id_location = s.id_location
+    left join subsector ss on s.id_sector = ss.id_sector
     `;
 
     try {		  
@@ -15,6 +22,23 @@ const getAll = async () => {
         return data;
     } catch (err) {   
         logger.error('getAll:error', err);
+        console.log(err)
+        throw ({ errno: err.errno, code: err.code });
+    }
+
+}
+
+const getLocations = async() => {
+    let sql = 
+    `
+    select * from location
+    `;
+
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        logger.error('getOperationById:error', err);
         throw ({ errno: err.errno, code: err.code });
     }
 
@@ -23,8 +47,8 @@ const getAll = async () => {
 const getOperationById = async(subsecid) => {
     let sql = 
     `
-    select * from operacion
-    where subsector_id = ${subsecid}
+    select * from operation
+    where id_subsector = ${subsecid}
     `;
 
     try {		  
@@ -40,7 +64,7 @@ const getOperationById = async(subsecid) => {
 const addLocation = async(locationid,locationName) => {
 
     let sql = 
-    `insert into locacion (idlocacion,locacion_name) values (null,'${locationName}')`;
+    `insert into location (id_location,name) values (null,'${locationName}')`;
 
     try {		  
         const data = await db.query(sql);
@@ -54,7 +78,7 @@ const addLocation = async(locationid,locationName) => {
 const addSector = async(sectorid,sectorName,locationId) => {
 
     let sql = 
-    `insert into sector (idsector,sector_name,loc_id) values (null,'${sectorName}',${locationId})`;
+    `insert into sector (id_sector,name,id_location) values (null,'${sectorName}',${locationId})`;
 
     try {		  
         const data = await db.query(sql);
@@ -68,7 +92,7 @@ const addSector = async(sectorid,sectorName,locationId) => {
 const addSubsector = async(subsectorid,subsectorName,sectorId) => {
 
     let sql = 
-    `insert into subsector (idsubsector,subsector_name,sector_id) values (null,'${subsectorName}',${sectorId})`;
+    `insert into subsector (id_subsector,name,id_sector) values (null,'${subsectorName}',${sectorId})`;
 
     try {		  
         const data = await db.query(sql);
@@ -79,9 +103,9 @@ const addSubsector = async(subsectorid,subsectorName,sectorId) => {
     }
 }
 
-const getOperationDataById = async (operationId) => {
+const getInspectionById = async (operationId) => {
     let sql = 
-    `select * from operacion_data where idoperacion = ${operationId}`
+    `select * from inspection where id_operation = ${operationId}`
     try {		  
         const data = await db.query(sql);
         return data;
@@ -91,16 +115,16 @@ const getOperationDataById = async (operationId) => {
     }
 }
 
-const saveOperationData = async (operationData) => {
-    let sql = `insert into operacion_data (idoperacion,op_img_path,op_score,op_date,id_user) values`
+const saveInspection = async (inspections) => {
+    let sql = `insert into inspection (uuid(),id_operation,op_img_path,op_score,op_date,id_user) values`
     let values = ``
-    for(let index in operationData){
-        const operation = operationData[index];
+    for(let index in inspections){
+        const operation = inspections[index];
 
-        let check_if_exist = `select * from operacion_data where idoperacion ='${operation.Id}' and op_date ='${operation.Date}'`
+        let check_if_exist = `select * from inspection where id_operation ='${operation.Id}' and op_date ='${operation.Date}'`
         let data = await db.query(check_if_exist)
         if(data.length === 0){
-            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${operation.Date}',null)${operationData.length-1 == index ? ';' : ','}`
+            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${operation.Date}',null)${inspections.length-1 == index ? ';' : ','}`
         }
     }    
 
@@ -109,22 +133,22 @@ const saveOperationData = async (operationData) => {
             const data = await db.query(sql+values);
             return data;
         } catch (err) {   
-            logger.error('Insert operacion_data: error', err);
+            logger.error('Insert inspection: error', err);
             throw ({ errno: err.errno, code: err.code });
         }
     }
 }
 
-const getTodayOperationData = async (subSecId,date) => {
+const getTodayInspections = async (subSecId,date) => {
     let sql = 
-    `select * from operacion o 
-    inner join operacion_data op on op.idoperacion = o.idoperacion
-    where o.subsector_id = '${subSecId}' and op.op_date ='${date}'`
+    `select * from operation o 
+    inner join inspection i on i.id_operation = o.id_operation
+    where o.id_subsector = '${subSecId}' and i.op_date ='${date}'`
     try {		  
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        logger.error('getTodayOperationData:error', err);
+        logger.error('getTodayInspections:error', err);
         throw ({ errno: err.errno, code: err.code });
     }
 }
@@ -135,7 +159,8 @@ module.exports = {
     addLocation,
     addSector,
     addSubsector,
-    getOperationDataById,
-    saveOperationData,
-    getTodayOperationData
+    getInspectionById,
+    saveInspection,
+    getTodayInspections,
+    getLocations
 }
