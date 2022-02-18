@@ -1,6 +1,4 @@
-//const config = require("config")
-const db = require("../utils/database")
-const logger = require('../utils/logger');
+import * as db  from "../utils/database"
 
 const getEPPInfo = async (locationId) => {
     let sql = 
@@ -22,13 +20,28 @@ const getEPPInfo = async (locationId) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        logger.error('getEPPInfo:error', err);
         console.log(err)
         throw ({ errno: err.errno, code: err.code });
     }
 
 }
 
-module.exports = {
-    getEPPInfo
+const getOperatorsBySector = async (sectorId) => {
+    let sql = 
+    `
+    select 
+        id_operator
+    from sector_operator
+    where id_sector = ${sectorId}
+    `;
+
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        console.log(err)
+        throw ({ errno: err.errno, code: err.code });
+    }
 }
+
+export {getEPPInfo,getOperatorsBySector}

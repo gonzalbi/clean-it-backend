@@ -1,7 +1,7 @@
-const express = require('express')
+import express from 'express'
+import multer from 'multer'
+import moment from 'moment'
 const router = express.Router()
-const multer = require('multer')
-const moment = require('moment')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -21,13 +21,12 @@ const idgaController = require('./idga-controller')
 
 router.get('/getLocationData', idgaController.getLocationData)
 router.get('/getOperations/:subSecId',idgaController.getOperations)
-router.get('/checkOperation/:subSecId',idgaController.checkOperationData)
+router.get('/checkInspection/:subSecId',idgaController.checkInspection)
 router.post('/addLocation',idgaController.addLocation)
 router.post('/addSector',idgaController.addSector)
 router.post('/addSubsector',idgaController.addSubsector)
-router.post('/saveOperationData',upload.array('files'), idgaController.saveOperationData)
-router.get('/getOperationData/:opid', idgaController.getOperationData)
+router.post('/saveInspection',upload.array('files'), idgaController.saveInspection)
+router.get('/getInspection/:opid', idgaController.getInspection)
 router.get('/getLocations',idgaController.getLocations)
-
 
 module.exports = router

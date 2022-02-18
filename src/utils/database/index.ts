@@ -1,15 +1,18 @@
-var mysql = require('mysql')
-var db = require('config').get('db')
-var util = require('util')
+import mysql from 'mysql'
+import config from 'config'
+import util from 'util'
 
-var pool = mysql.createPool({
+const db = config.get('db')
+const pool = mysql.createPool({
   connectionLimit: 2,
   host: db.hostname,
   port: db.port,
   user: db.user,
   password: db.password,
   database: db.database,
-},{multipleStatements : true})
+  waitForConnections: true,
+  queueLimit: 0
+})
 
 pool.query = util.promisify(pool.query)
 
@@ -49,14 +52,9 @@ const addAuditData = (obj, operation) => {
 const query = (qry) => {
   // add auditData if insert / update
     if (qry.sql && (qry.sql.indexOf('insert') > -1 || qry.sql.indexOf('update') > -1)) {
-    qry.values = snakecase(qry.values)
     qry.values = addAuditData(qry.values, qry.sql.indexOf('insert') > -1 ? 'INSERT' : 'UPDATE')
   }
   return pool.query(qry)
 }
 
-
-module.exports = {
-  pool: pool,
-  query: query
-}
+export {query}

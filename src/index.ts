@@ -1,11 +1,15 @@
 const express = require('express')
 const server = express()
 const routes = require('./routes')
+const config = require('config')
 
-let create = (config) => {
+let create = () => {
     //SET SERVER SETTINGS
-    server.set('port', config.port)
-    server.set('hostname', config.hostname)
+    const port = config.get("server").port
+    const hostname = config.get("server").hostname
+
+    server.set('port', port)
+    server.set('hostname', hostname)
 
     //JSON parse
     server.use(express.json())
@@ -22,9 +26,6 @@ let start = () => {
     server.listen(port,console.log(`Server listening on http://${hostname}:${port}`))
 }
 
-module.exports = {
-    create,
-    start
-}
-
+create();
+start();
 

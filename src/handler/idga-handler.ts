@@ -1,11 +1,13 @@
 
-const Location = require("../models/Location");
-const Sector = require("../models/Sector");
-const SubSector = require("../models/SubSector");
-const Operation = require("../models/Operation");
-const Inspection = require("../models/Inspection")
-const moment = require('moment')
-const idgaService = require('../services/idga-service')
+import {Location} from "../models/Location"
+import {Sector} from "../models/Sector";
+import {SubSector} from "../models/SubSector";
+import {Operation} from "../models/Operation";
+import {Inspection} from "../models/Inspection"
+import * as idgaService from  '../services/idga-service'
+import moment from 'moment'
+
+
 
 const formatInspections = (data) => {
     let inspections = []
@@ -18,27 +20,30 @@ const formatInspections = (data) => {
     }
     return inspections;
 }
+
 const mapLocationData = async () => {
     const data = await idgaService.getAll()
 
-    let retData = [];
-    for (let item of data) {
+    const retData:Location[] = [];
 
-        if (location = retData.find(location => location.getId() == item.id_location)) {
-            if (sector = location.getSectors().find(sector => sector.getId() == item.id_sector)) {
-                let subsect = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name) : null
-                sector.addSubSector(subsect)
+    for (let item of data) {
+        const location = retData.find(location => location.id_location == item.id_location)
+        if (location) {
+            const sector = location.Sectors.find(sector => sector.id_sector == item.id_sector)
+            if (sector) {
+                const subsect = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name) : null
+                sector.Subsectors.push(subsect)
                 continue
             }
-            let subsect = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name) : null
-            let sect = item.id_sector ? new Sector(item.id_sector, item.sector_name, subsect) : null
+            const subsect = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name) : null
+            const sect = item.id_sector ? new Sector(item.id_sector, item.sector_name, subsect ? [subsect] : null) : null
             location.Sectors.push(sect)
             continue
         }
 
-        let newSubsector = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name, null) : null
-        let newSector = item.id_sector ? new Sector(item.id_sector, item.sector_name, newSubsector) : null
-        let newLocation = new Location(item.id_location, item.location_name, newSector)
+        let newSubsector = item.id_subsector ? new SubSector(item.id_subsector, item.subsector_name) : null
+        let newSector = item.id_sector ? new Sector(item.id_sector, item.sector_name, newSubsector ? [newSubsector] : null) : null
+        let newLocation = new Location(item.id_location, item.location_name, newSector ? [newSector] : null)
 
         retData.push(newLocation)
 
@@ -46,6 +51,8 @@ const mapLocationData = async () => {
 
     return retData
 }
+
+
 const handleInspections = async (data,files) => {
     let inspections = [];
     const date = moment().format("YYYY-MM-DD")
@@ -56,7 +63,7 @@ const handleInspections = async (data,files) => {
         )
     }
     try{    
-        await idgaService.saveInspections(inspections)
+        await idgaService.saveInspection(inspections)
         return true
     }catch (e){
         console.log(e);
@@ -111,7 +118,6 @@ const addSubsector = async (data) => {
 
 const getInspections = async (opid) => {
     try {
-        const opid = req.params.opid;
         return formatInspections(await idgaService.getInspectionById(opid))
     } catch (err) {
         console.log(err)
@@ -143,7 +149,7 @@ const getLocations = async () => {
     }
 }
 
-module.exports = {
+export {    
     getInspections,
     mapLocationData,
     handleInspections,

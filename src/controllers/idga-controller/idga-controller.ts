@@ -9,22 +9,24 @@ const getLocationData = async (req, res, next) => {
     }
 };
 
+
 const getOperations = async (req, res, next) => {
     
     try {
         const subSecId = req.params.subSecId ? req.params.subSecId : null;
         res.send(await idgaHandler.mapOperations(subSecId))
     } catch (err) {
+        res.status(500).send(`Internal Error: ${err}`)
         console.log(err)
     }
 };
 
-const saveOperationData = async (req, res, next) => {
+const saveInspection = async (req, res, next) => {
     try {
-        idgaHandler.handleOperationData(req.body, req.files.map(x => x.filename))
+        idgaHandler.handleInspection(req.body, req.files.map(x => x.filename))
 
         res.status(200).send('Operation saved')
-    } catch {
+    } catch (err) {
         res.status(500).send(`Internal Error: ${err}`)
     }
 }
@@ -64,10 +66,10 @@ const addSubsector = async (req, res, next) => {
     }
 }
 
-const getOperationData = async (req, res, next) => {
+const getInspection = async (req, res, next) => {
     try {
         const opid = req.params.opid;
-        let response = await idgaHandler.getOperationData(opid)
+        let response = await idgaHandler.getInspections(opid)
 
         res.status(200).send(response)
     } catch (err) {
@@ -77,15 +79,15 @@ const getOperationData = async (req, res, next) => {
 }
 
 
-const checkOperationData = async (req, res, next) => {
+const checkInspection = async (req, res, next) => {
     const subSecId = req.params.subSecId ? req.params.subSecId : null;
 
     try{
-        const data = await idgaHandler.checkOperationData(subSecId)
+        const data = await idgaHandler.checkInspection(subSecId)
         res.status(200).send(data)
     }catch (e) {
         console.log(e)
-        res.status(500).send(`Internal Error: ${err}`)
+        res.status(500).send(`Internal Error: ${e}`)
     }
 }
 
@@ -95,19 +97,18 @@ const getLocations = async (req,res) => {
         res.status(200).send(data)
     }catch (e) {
         console.log(e)
-        res.status(500).send(`Internal Error: ${err}`)
+        res.status(500).send(`Internal Error: ${e}`)
     }
 }
-
 
 module.exports = {
     getLocationData,
     getOperations,
-    saveOperationData,
+    saveInspection,
     addLocation,
     addSector,
     addSubsector,
-    getOperationData,
-    checkOperationData,
+    getInspection,
+    checkInspection,
     getLocations
 }
