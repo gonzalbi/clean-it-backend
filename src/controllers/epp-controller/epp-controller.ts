@@ -1,13 +1,13 @@
 
 import * as eppHandler from '../../handler/epp-handler'
 
-const getEPPInfo = async (req, res, next) => {
+const getOperatorsBySector = async (req, res) => {
     try {
         const locationId = req.params.locationId
         
         if(!locationId) res.status(400).send()
 
-        const response = await eppHandler.getEppInfo(locationId)
+        const response = await eppHandler.getOperatorsBySector(locationId)
         res.status(200).send(response)
     } catch (err) {
         console.log(err)
@@ -34,7 +34,7 @@ const getentregaRopaZip = async (req,res) => {
 }
 
 export {
-    getEPPInfo,
+    getOperatorsBySector,
     getentregaRopaZip,
     getEPPZip
 }

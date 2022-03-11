@@ -1,7 +1,7 @@
 
 const idgaHandler  = require('../../handler/idga-handler');
 
-const getLocationData = async (req, res, next) => {
+const getLocationData = async (req, res) => {
     try {
         res.send(await idgaHandler.mapLocationData())
     } catch (err) {
@@ -10,7 +10,7 @@ const getLocationData = async (req, res, next) => {
 };
 
 
-const getOperations = async (req, res, next) => {
+const getOperations = async (req, res) => {
     
     try {
         const subSecId = req.params.subSecId ? req.params.subSecId : null;
@@ -21,21 +21,27 @@ const getOperations = async (req, res, next) => {
     }
 };
 
-const saveInspection = async (req, res, next) => {
+const saveInspection = async (req, res) => {
     try {
-        idgaHandler.handleInspection(req.body, req.files.map(x => x.filename))
+        const resp = idgaHandler.saveInspections(req.body, req.files.map(x => x.filename))
+        
+        if(resp){
+            res.status(200).send('Operation saved')
+        }else{
+        res.status(500).send()
+        }
+        
 
-        res.status(200).send('Operation saved')
     } catch (err) {
         res.status(500).send(`Internal Error: ${err}`)
     }
 }
 
 
-const addLocation = async (req, res, next) => {
+const addLocation = async (req, res) => {
     try {
 
-        let response = await idgaHandler.addLocation(req.body)
+        //let response = await idgaHandler.addLocation(req.body)
 
         res.status(200).send('Location Created')
     } catch (err) {
@@ -44,7 +50,7 @@ const addLocation = async (req, res, next) => {
     }
 }
 
-const addSector = async (req, res, next) => {
+const addSector = async (req, res) => {
     try {
         await idgaHandler.addSector(req.body)
 
@@ -55,7 +61,7 @@ const addSector = async (req, res, next) => {
     }
 }
 
-const addSubsector = async (req, res, next) => {
+const addSubsector = async (req, res) => {
     try {
         await idgaHandler.addSubsector(req.body)
 
@@ -66,7 +72,7 @@ const addSubsector = async (req, res, next) => {
     }
 }
 
-const getInspection = async (req, res, next) => {
+const getInspection = async (req, res) => {
     try {
         const opid = req.params.opid;
         let response = await idgaHandler.getInspections(opid)
@@ -79,7 +85,7 @@ const getInspection = async (req, res, next) => {
 }
 
 
-const checkInspection = async (req, res, next) => {
+const checkInspection = async (req, res) => {
     const subSecId = req.params.subSecId ? req.params.subSecId : null;
 
     try{

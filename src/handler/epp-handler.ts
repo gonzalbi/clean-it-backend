@@ -4,7 +4,7 @@ import {Operator} from '../models/Operator'
 import {Sector} from '../models/Sector'
 
 
-const getEppInfo = async (locationId) => {
+const getOperatorsBySector = async (locationId) => {
     const data = await eppService.getEPPInfo(locationId)
 
     const retData: Sector[] = [];
@@ -42,7 +42,7 @@ const getEntregaRopaFile = (sectorId) => {
 
 
 export {
-    getEppInfo,
+    getOperatorsBySector,
     getEppFile,
     getEntregaRopaFile
 }

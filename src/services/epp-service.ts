@@ -21,7 +21,7 @@ const getEPPInfo = async (locationId) => {
         return data;
     } catch (err) {   
         console.log(err)
-        throw ({ errno: err.errno, code: err.code });
+        throw ({func: 'getEPPInfo', errno: err.errno, code: err.code });
     }
 
 }
@@ -40,7 +40,7 @@ const getOperatorsBySector = async (sectorId) => {
         return data;
     } catch (err) {   
         console.log(err)
-        throw ({ errno: err.errno, code: err.code });
+        throw ({func: 'getOperatorsBySector', errno: err.errno, code: err.code });
     }
 }
 

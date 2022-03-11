@@ -53,13 +53,13 @@ const mapLocationData = async () => {
 }
 
 
-const handleInspections = async (data,files) => {
+const saveInspections = async (data,files) => {
     let inspections = [];
     const date = moment().format("YYYY-MM-DD")
 
     for(let i = 0; i < files.length; i++){
         inspections.push(
-            new Inspection(data.operationId[i], data.operationName[i], data.score[i], files[i],date)
+            new Inspection(data.operationId[i],data.score[i],files[i],date)
         )
     }
     try{    
@@ -67,6 +67,7 @@ const handleInspections = async (data,files) => {
         return true
     }catch (e){
         console.log(e);
+        return false
     }
 }
 const mapOperations = async (subSecId) => {
@@ -82,12 +83,12 @@ const mapOperations = async (subSecId) => {
 const addLocation = async (data) => {
     try {
         let locationName = data.name
-        let locationId = data.id ? data.id : null
-        let response = await idgaService.addLocation(locationId, locationName)
+        let response = await idgaService.addLocation(locationName)
 
-        return true
+        return response ? true : false
     } catch (err) {
         console.log(err)
+        return false
     }
 }
 
@@ -96,11 +97,12 @@ const addSector = async (data) => {
     try {
         let locationId = data.parentId
         let sectorName = data.name
-        await idgaService.addSector(null, sectorName, locationId)
+        await idgaService.addSector(sectorName, locationId)
 
         return true
     } catch (err) {
         console.log(err)
+        return false
     }
 }
 
@@ -108,11 +110,12 @@ const addSubsector = async (data) => {
     try {
         let sectorid = data.parentId
         let subsectorName = data.name
-        await idgaService.addSubsector(null, subsectorName, sectorid)
+        await idgaService.addSubsector(subsectorName, sectorid)
 
         return true
     } catch (err) {
         console.log(err)
+        return false
     }
 }
 
@@ -121,6 +124,7 @@ const getInspections = async (opid) => {
         return formatInspections(await idgaService.getInspectionById(opid))
     } catch (err) {
         console.log(err)
+        return false
     }
 }
 
@@ -131,6 +135,7 @@ const checkInspection = async (subSecId) => {
        return data
     }catch (e) {
         console.log(e)
+        return false
     }
 }
 
@@ -146,13 +151,14 @@ const getLocations = async () => {
         return locations
     } catch (err) {
         console.log(err)
+        return []
     }
 }
 
 export {    
     getInspections,
     mapLocationData,
-    handleInspections,
+    saveInspections,
     mapOperations,
     addLocation,
     addSector,

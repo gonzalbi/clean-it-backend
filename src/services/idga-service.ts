@@ -1,3 +1,4 @@
+import { Inspection } from "../models/Inspection";
 import * as db  from "../utils/database"
 
 const getAll = async () => {
@@ -20,7 +21,7 @@ const getAll = async () => {
         return data;
     } catch (err) {   
         console.log(err)
-        throw ({ errno: err.errno, code: err.code });
+        throw ({func: 'getAll', errno: err.errno, code: err.code });
     }
 
 }
@@ -35,7 +36,8 @@ const getLocations = async() => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'getLocations', errno: err.errno, code: err.code });
     }
 
 }
@@ -51,12 +53,13 @@ const getOperationById = async(subsecid) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'getOperationById', errno: err.errno, code: err.code });
     }
 
 }
 
-const addLocation = async(locationid,locationName) => {
+const addLocation = async(locationName) => {
 
     let sql = 
     `insert into location (id_location,name) values (null,'${locationName}')`;
@@ -65,11 +68,12 @@ const addLocation = async(locationid,locationName) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'addLocation', errno: err.errno, code: err.code });
     }
 }
 
-const addSector = async(sectorid,sectorName,locationId) => {
+const addSector = async(sectorName,locationId) => {
 
     let sql = 
     `insert into sector (id_sector,name,id_location) values (null,'${sectorName}',${locationId})`;
@@ -78,11 +82,12 @@ const addSector = async(sectorid,sectorName,locationId) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'addSector', errno: err.errno, code: err.code });
     }
 }
 
-const addSubsector = async(subsectorid,subsectorName,sectorId) => {
+const addSubsector = async(subsectorName,sectorId) => {
 
     let sql = 
     `insert into subsector (id_subsector,name,id_sector) values (null,'${subsectorName}',${sectorId})`;
@@ -91,7 +96,8 @@ const addSubsector = async(subsectorid,subsectorName,sectorId) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'addSubsector', errno: err.errno, code: err.code });
     }
 }
 
@@ -102,20 +108,27 @@ const getInspectionById = async (operationId) => {
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'getInspectionById', errno: err.errno, code: err.code });
     }
 }
 
-const saveInspection = async (inspections) => {
-    let sql = `insert into inspection (uuid(),id_operation,op_img_path,op_score,op_date,id_user) values`
+const saveInspection = async (inspections: Inspection[]) => {
+
+    let sql = `insert into inspection (id_inspection,id_operation,img_path,score,date,id_user) values`
     let values = ``
     for(let index in inspections){
-        const operation = inspections[index];
+        const inspection = inspections[index];
 
-        let check_if_exist = `select * from inspection where id_operation ='${operation.Id}' and op_date ='${operation.Date}'`
-        let data = await db.query(check_if_exist)
-        if(data.length === 0){
-            values += `(${operation.Id},'${operation.ImgPath}','${operation.Score}','${operation.Date}',null)${inspections.length-1 == parseInt(index) ? ';' : ','}`
+        try{
+            const checkIfExistQuery = `select * from inspection where id_operation ='${inspection.id_operation}' and date ='${inspection.date}'`
+            const previouslyCreatedInspection = await db.query(checkIfExistQuery)
+            if(previouslyCreatedInspection.length === 0){
+                values += `(uuid(),${inspection.id_operation},'${inspection.img_path}','${inspection.score}','${inspection.date}',null)${inspections.length-1 == parseInt(index) ? ';' : ','}`
+            }
+        }catch (err){
+            console.log(err)
+            throw ({func: 'saveInspection', errno: err.errno, code: err.code });
         }
     }    
 
@@ -124,21 +137,23 @@ const saveInspection = async (inspections) => {
             const data = await db.query(sql+values);
             return data;
         } catch (err) {   
-            throw ({ errno: err.errno, code: err.code });
+            console.log(err)
+            throw ({func: 'saveInspection', errno: err.errno, code: err.code });
         }
     }
 }
 
-const getTodayInspection = async (subSecId,date) => {
-    let sql = 
+const getTodayInspection = async (subSecId: string,date: string) => {
+    let sql =  
     `select * from operation o 
     inner join inspection i on i.id_operation = o.id_operation
-    where o.id_subsector = '${subSecId}' and i.op_date ='${date}'`
+    where o.id_subsector = '${subSecId}' and i.date ='${date}'`
     try {		  
         const data = await db.query(sql);
         return data;
     } catch (err) {   
-        throw ({ errno: err.errno, code: err.code });
+        console.log(err)
+        throw ({func: 'getTodayInspection', errno: err.errno, code: err.code });
     }
 }
 
