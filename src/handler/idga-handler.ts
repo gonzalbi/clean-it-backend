@@ -93,10 +93,8 @@ const addLocation = async (data) => {
 }
 
 
-const addSector = async (data) => {
+const addSector = async (sectorName,locationId) => {
     try {
-        let locationId = data.parentId
-        let sectorName = data.name
         await idgaService.addSector(sectorName, locationId)
 
         return true
@@ -106,11 +104,9 @@ const addSector = async (data) => {
     }
 }
 
-const addSubsector = async (data) => {
+const addSubsector = async (subsectorName,sectorId) => {
     try {
-        let sectorid = data.parentId
-        let subsectorName = data.name
-        await idgaService.addSubsector(subsectorName, sectorid)
+        await idgaService.addSubsector(subsectorName, sectorId)
 
         return true
     } catch (err) {

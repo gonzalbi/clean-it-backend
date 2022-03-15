@@ -52,7 +52,8 @@ const addLocation = async (req, res) => {
 
 const addSector = async (req, res) => {
     try {
-        await idgaHandler.addSector(req.body)
+        const locationId = req.params.locationId;
+        await idgaHandler.addSector(req.body.sectorName,locationId)
 
         res.status(200).send('Sector Created')
     } catch (err) {
@@ -63,7 +64,8 @@ const addSector = async (req, res) => {
 
 const addSubsector = async (req, res) => {
     try {
-        await idgaHandler.addSubsector(req.body)
+        const sectorId = req.params.sectorId;
+        await idgaHandler.addSubsector(req.body.subsectorName,sectorId)
 
         res.status(200).send('Sector Created')
     } catch (err) {
