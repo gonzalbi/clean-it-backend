@@ -74,6 +74,18 @@ const addSubsector = async (req, res) => {
     }
 }
 
+const addOperation = async (req, res) => {
+    try {
+        const subsectorId = req.params.subsectorId;
+        await idgaHandler.addOperation(req.body.operationName,subsectorId)
+
+        res.status(200).send('Sector Created')
+    } catch (err) {
+        console.log(err)
+        res.status(500).send(`Internal Error: ${err}`)
+    }
+}
+
 const getInspection = async (req, res) => {
     try {
         const opid = req.params.opid;
@@ -116,6 +128,7 @@ module.exports = {
     addLocation,
     addSector,
     addSubsector,
+    addOperation,
     getInspection,
     checkInspection,
     getLocations

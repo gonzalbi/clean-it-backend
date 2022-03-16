@@ -101,6 +101,20 @@ const addSubsector = async(subsectorName,sectorId) => {
     }
 }
 
+const addOperation = async(operationName,subsectorId) => {
+
+    let sql = 
+    `insert into operation (id_operation,name,id_subsector) values (null,'${operationName}',${subsectorId})`;
+
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        console.log(err)
+        throw ({func: 'addOperation', errno: err.errno, code: err.code });
+    }
+}
+
 const getInspectionById = async (operationId) => {
     let sql = 
     `select * from inspection where id_operation = ${operationId}`
@@ -166,5 +180,6 @@ export {
     getInspectionById,
     saveInspection,
     getTodayInspection,
-    getLocations
+    getLocations,
+    addOperation
 }

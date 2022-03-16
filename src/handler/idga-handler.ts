@@ -115,6 +115,17 @@ const addSubsector = async (subsectorName,sectorId) => {
     }
 }
 
+const addOperation = async (operationName,subsectorId) => {
+    try {
+        await idgaService.addOperation(operationName, subsectorId)
+
+        return true
+    } catch (err) {
+        console.log(err)
+        return false
+    }
+}
+
 const getInspections = async (opid) => {
     try {
         return formatInspections(await idgaService.getInspectionById(opid))
@@ -159,6 +170,7 @@ export {
     addLocation,
     addSector,
     addSubsector,
+    addOperation,
     checkInspection,
     getLocations
 }
