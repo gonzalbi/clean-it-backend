@@ -40,8 +40,7 @@ const saveInspection = async (req, res) => {
 
 const addLocation = async (req, res) => {
     try {
-
-        //let response = await idgaHandler.addLocation(req.body)
+        await idgaHandler.addLocation(req.body.locationName)
 
         res.status(200).send('Location Created')
     } catch (err) {
@@ -89,7 +88,7 @@ const addOperation = async (req, res) => {
 const getInspection = async (req, res) => {
     try {
         const opid = req.params.opid;
-        let response = await idgaHandler.getInspections(opid)
+        const response = await idgaHandler.getInspections(opid)
 
         res.status(200).send(response)
     } catch (err) {
@@ -121,6 +120,13 @@ const getLocations = async (req,res) => {
     }
 }
 
+const getOperatorsBySector = async (req,res) => {
+    const id_sector = req.params.sectorId
+    const response = await idgaHandler.getOperatorsBySector(id_sector)
+
+    res.status(200).send(response)
+}
+
 module.exports = {
     getLocationData,
     getOperations,
@@ -131,5 +137,6 @@ module.exports = {
     addOperation,
     getInspection,
     checkInspection,
-    getLocations
+    getLocations,
+    getOperatorsBySector
 }

@@ -171,6 +171,25 @@ const getTodayInspection = async (subSecId: string,date: string) => {
     }
 }
 
+const getOperatorsBySector = async (sectorId) => {
+    let sql = 
+    `
+    select 
+    o.*
+    from sector_operator so
+    inner join operator o on so.id_operator = o.id_operator
+    where id_sector  = ${sectorId}
+    `;
+
+    try {		  
+        const data = await db.query(sql);
+        return data;
+    } catch (err) {   
+        console.log(err)
+        throw ({func: 'getOperatorsBySector', errno: err.errno, code: err.code });
+    }
+}
+
 export {
     getAll,
     getOperationById,
@@ -181,5 +200,6 @@ export {
     saveInspection,
     getTodayInspection,
     getLocations,
-    addOperation
+    addOperation,
+    getOperatorsBySector
 }

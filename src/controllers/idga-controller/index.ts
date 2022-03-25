@@ -29,5 +29,7 @@ router.post('/addOperation/:subsectorId',idgaController.addOperation)
 router.post('/saveInspection',upload.array('files'), idgaController.saveInspection)
 router.get('/getInspection/:opid', idgaController.getInspection)
 router.get('/getLocations',idgaController.getLocations)
+router.get('/getOperatorsBySector/:sectorId',idgaController.getOperatorsBySector)
+
 
 module.exports = router

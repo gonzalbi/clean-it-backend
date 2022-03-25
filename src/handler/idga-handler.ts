@@ -6,19 +6,32 @@ import {Operation} from "../models/Operation";
 import {Inspection} from "../models/Inspection"
 import * as idgaService from  '../services/idga-service'
 import moment from 'moment'
+import { Operator } from "../models/Operator";
 
 
 
 const formatInspections = (data) => {
-    let inspections = []
+    const inspections = []
 
-    for(let operation of data){
+    for(const operation of data){
         inspections.push(
             new Inspection(operation.idoperacion,null,operation.op_score,operation.op_img_path,operation.op_date)
         )
 
     }
     return inspections;
+}
+
+const formatOperators = (data) => {
+    const operators = []
+
+    for(const operator of data){
+        operators.push(
+            new Operator(operator.id_operator,operator.name,operator.last_name,operator.full_name)
+        )
+    } 
+
+    return operators
 }
 
 const mapLocationData = async () => {
@@ -80,9 +93,8 @@ const mapOperations = async (subSecId) => {
     return operations
 }
 
-const addLocation = async (data) => {
+const addLocation = async (locationName) => {
     try {
-        let locationName = data.name
         let response = await idgaService.addLocation(locationName)
 
         return response ? true : false
@@ -162,6 +174,17 @@ const getLocations = async () => {
     }
 }
 
+const getOperatorsBySector = async (id_sector) => {
+
+    try{
+       return  formatOperators(await idgaService.getOperatorsBySector(id_sector))
+    }catch(err){
+        console.log(err)
+        return []
+    }
+
+}
+
 export {    
     getInspections,
     mapLocationData,
@@ -172,5 +195,6 @@ export {
     addSubsector,
     addOperation,
     checkInspection,
-    getLocations
+    getLocations,
+    getOperatorsBySector
 }
